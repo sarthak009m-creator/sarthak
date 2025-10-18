@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookVerse - Your Digital Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+/* style.css content */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #4A90E2;
+    --secondary-color: #50C878;
+    --dark-color: #2C3E50;
+    --light-color: #ECF0F1;
+    --accent-color: #E74C3C;
+    --text-color: #333;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #f8f9fa;
+}
+
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+header {
+    background: white;
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 20px;
+}
+
+.logo h1 {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    align-items: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+nav a:hover, nav a.active {
+    color: var(--primary-color);
+}
+
+#user-greeting {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+#logout-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#logout-btn:hover {
+    background: #c0392b;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: var(--dark-color);
+    transition: var(--transition);
+}
+
+.page {
+    display: none;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.search-bar {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+    gap: 0.5rem;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+
+.search-bar button {
+    padding: 1rem 2rem;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.search-bar button:hover {
+    background: #45b369;
+    transform: translateY(-2px);
+}
+
+.top-books, .recommendations, .free-books-list {
+    margin: 3rem 0;
+}
+
+.top-books h2, .recommendations h2, .free-books-list h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--dark-color);
+}
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.book-card {
+    position: relative; /* For the FREE badge */
+    background: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.book-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.book-card-content {
+    padding: 1rem;
+}
+
+.book-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.book-card .author {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.book-card .rating {
+    color: #f39c12;
+    margin-bottom: 0.5rem;
+}
+
+.book-card .price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.free-badge {
+    background: var(--secondary-color);
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.book-card .description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.book-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3a7bc8;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.filter-section {
+    margin: 2rem 0;
+}
+
+.filter-section select {
+    padding: 0.75rem;
+    border: 2px solid var(--light-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.upload-form-container, .auth-container {
+    max-width: 600px;
+    margin: 3rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--light-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    margin-top: -1rem; /* Adjust spacing with price field */
+    margin-bottom: 1.5rem;
+}
+
+.form-check input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+.form-check label {
+    font-weight: 400;
+    margin-bottom: 0;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.auth-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    background: var(--light-color);
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.auth-tab.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.auth-form h2 {
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+}
+
+.book-details-container {
+    margin: 3rem 0;
+}
+
+.book-details-header {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.book-details-header img {
+    width: 100%;
+    border-radius: var(--border-radius);
+}
+
+.book-details-info h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.book-details-info .author {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.book-details-info .rating {
+    font-size: 1.1rem;
+    color: #f39c12;
+    margin-bottom: 1rem;
+}
+
+.book-details-info .price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+}
+
+.book-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.book-details-content {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 3rem;
+}
+
+.book-details-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.sample-content {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    line-height: 1.8;
+}
+
+.related-books {
+    margin-top: 3rem;
+}
+
+.related-books h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+}
+
+.my-books-tabs {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.my-books-tab {
+    padding: 1rem 2rem;
+    border: none;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 6px;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.my-books-tab.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.reader-content {
+    max-width: 800px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.close:hover {
+    color: #000;
+}
+
+#pdf-viewer {
+    width: 100%;
+    height: 600px;
+    border: 1px solid var(--light-color);
+    border-radius: 6px;
+    margin-top: 1rem;
+    overflow: auto;
+}
+
+.success-content {
+    text-align: center;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--secondary-color);
+    color: white;
+    font-size: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.success-content h2 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid var(--light-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.payment-option:hover {
+    border-color: var(--primary-color);
+    background: #f8f9fa;
+}
+
+.payment-option input[type="radio"] {
+    margin-right: 0.75rem;
+    cursor: pointer;
+}
+
+.payment-option input[type="radio"]:checked + .payment-label {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.payment-label {
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+footer {
+    background: var(--dark-color);
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    nav ul {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: var(--box-shadow);
+        display: none;
+        gap: 1rem;
+    }
+
+    nav ul.active {
+        display: flex;
+    }
+
+    .hero h2 {
+        font-size: 1.8rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .book-card img {
+        height: 200px;
+    }
+
+    .book-details-header {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .book-details-header img {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .book-details-info h1 {
+        font-size: 1.8rem;
+    }
+
+    .book-actions {
+        flex-direction: column;
+    }
+
+    .my-books-tabs {
+        flex-direction: column;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-methods {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 1.4rem;
+    }
+
+    .hero {
+        padding: 2rem 0;
+    }
+
+    .hero h2 {
+        font-size: 1.5rem;
+    }
+
+    .books-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .book-card img {
+        height: 250px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>📚 BookVerse</h1>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link active" data-page="home">Home</a></li>
+                    <li><a href="#library" class="nav-link" data-page="library">Library</a></li>
+                    <li><a href="#free-books" class="nav-link" data-page="free-books">Free Books</a></li>
+                    <li><a href="#upload" class="nav-link" data-page="upload">Upload</a></li>
+                    <li><a href="#my-books" class="nav-link" data-page="my-books" id="my-books-nav" style="display: none;">My Books</a></li>
+                    <li><a href="#login" class="nav-link" data-page="login" id="login-nav">Login</a></li>
+                    <li><span id="user-greeting" style="display: none;"></span></li>
+                    <li><button id="logout-btn" style="display: none;">Logout</button></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home-page" class="page active">
+            <div class="hero">
+                <div class="container">
+                    <h2>Discover Your Next Great Read</h2>
+                    <p>Explore thousands of eBooks across all genres</p>
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="Search by book name, author, or category...">
+                        <button id="search-btn">🔍 Search</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <section class="top-books">
+                    <h2>Top 10 Science Books</h2>
+                    <div id="top-books-grid" class="books-grid"></div>
+                </section>
+
+                <section class="recommendations" id="recommendations-section" style="display: none;">
+                    <h2>You May Like</h2>
+                    <div id="recommendations-grid" class="books-grid"></div>
+                </section>
+            </div>
+        </section>
+
+        <section id="library-page" class="page">
+            <div class="container">
+                <h2>Full Library</h2>
+                <div class="filter-section">
+                    <select id="category-filter">
+                        <option value="all">All Categories</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Astronomy">Astronomy</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Psychology">Psychology</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div id="library-grid" class="books-grid"></div>
+            </div>
+        </section>
+
+        <section id="free-books-page" class="page">
+            <div class="container">
+                <section class="free-books-list">
+                    <h2>Absolutely Free eBooks</h2>
+                    <div id="free-books-grid" class="books-grid">
+                        </div>
+                </section>
+            </div>
+        </section>
+
+        <section id="upload-page" class="page">
+            <div class="container">
+                <div class="upload-form-container">
+                    <h2>Upload Your eBook</h2>
+                    <form id="upload-form">
+                        <div class="form-group">
+                            <label for="book-title">Book Title *</label>
+                            <input type="text" id="book-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-author">Author *</label>
+                            <input type="text" id="book-author" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-description">Description *</label>
+                            <textarea id="book-description" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-category">Category *</label>
+                            <select id="book-category" required>
+                                <option value="">Select Category</option>
+                                <option value="Physics">Physics</option>
+                                <option value="Biology">Biology</option>
+                                <option value="Chemistry">Chemistry</option>
+                                <option value="Astronomy">Astronomy</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Psychology">Psychology</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-price">Price ($) *</label>
+                            <input type="number" id="book-price" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="is-free-book">
+                            <label for="is-free-book">Make this book free?</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-file">Upload File (PDF or EPUB) *</label>
+                            <input type="file" id="book-file" accept=".pdf,.epub" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-cover">Book Cover Image (optional)</label>
+                            <input type="file" id="book-cover" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn-primary">Upload Book</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="login-page" class="page">
+            <div class="container">
+                <div class="auth-container">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="login">Login</button>
+                        <button class="auth-tab" data-tab="signup">Sign Up</button>
+                    </div>
+                    
+                    <form id="login-form" class="auth-form">
+                        <h2>Welcome Back</h2>
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Login</button>
+                    </form>
+
+                    <form id="signup-form" class="auth-form" style="display: none;">
+                        <h2>Create Account</h2>
+                        <div class="form-group">
+                            <label for="signup-name">Full Name</label>
+                            <input type="text" id="signup-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="book-details-page" class="page">
+            <div class="container">
+                <div class="book-details-container">
+                    <div class="book-details-header">
+                        <img id="detail-cover" src="" alt="">
+                        <div class="book-details-info">
+                            <h1 id="detail-title"></h1>
+                            <p class="author">by <span id="detail-author"></span></p>
+                            <div class="rating">
+                                <span id="detail-rating"></span>
+                            </div>
+                            <p class="price" id="detail-price"></p>
+                            <div class="book-actions">
+                                <button class="btn-primary" id="detail-buy-btn">Buy Now</button>
+                                <button class="btn-secondary" id="detail-preview-btn">Read Sample</button>
+                                <button class="btn-secondary" id="detail-wishlist-btn">Add to Wishlist</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="book-details-content">
+                        <h3>About This Book</h3>
+                        <p id="detail-description"></p>
+                    </div>
+                    <div class="related-books">
+                        <h3>Customers Also Liked</h3>
+                        <div id="related-books-grid" class="books-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="my-books-page" class="page">
+            <div class="container">
+                <h2>My Books</h2>
+                <div class="my-books-tabs">
+                    <button class="my-books-tab active" data-tab="purchased">My Library</button>
+                    <button class="my-books-tab" data-tab="uploaded">My Uploads</button>
+                    <button class="my-books-tab" data-tab="wishlist">Wishlist</button>
+                </div>
+                <div id="purchased-books" class="my-books-section">
+                    <div id="purchased-books-grid" class="books-grid"></div>
+                </div>
+                <div id="uploaded-books" class="my-books-section" style="display: none;">
+                    <div id="uploaded-books-grid" class="books-grid"></div>
+                </div>
+                <div id="wishlist-books" class="my-books-section" style="display: none;">
+                    <div id="wishlist-books-grid" class="books-grid"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Checkout</h2>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label>Book:</label>
+                    <p id="checkout-book-title"></p>
+                </div>
+                <div class="form-group">
+                    <label>Amount:</label>
+                    <p id="checkout-amount"></p>
+                </div>
+                <div class="form-group">
+                    <label>Select Payment Method *</label>
+                    <div class="payment-methods">
+                        <label class="payment-option">
+                            <input type="radio" name="payment-method" value="credit-card" checked>
+                            <span class="payment-label">💳 Credit/Debit Card</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment-method" value="paypal">
+                            <span class="payment-label">🅿️ PayPal</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment-method" value="google-pay">
+                            <span class="payment-label">🔵 Google Pay</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment-method" value="apple-pay">
+                            <span class="payment-label">🍎 Apple Pay</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="checkout-name">Full Name *</label>
+                    <input type="text" id="checkout-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="checkout-email">Email *</label>
+                    <input type="email" id="checkout-email" required>
+                </div>
+                <div id="card-details-section">
+                    <div class="form-group">
+                        <label for="checkout-card">Card Number *</label>
+                        <input type="text" id="checkout-card" placeholder="1234 5678 9012 3456">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="checkout-expiry">Expiry *</label>
+                            <input type="text" id="checkout-expiry" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label for="checkout-cvv">CVV *</label>
+                            <input type="text" id="checkout-cvv" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Complete Purchase & Download</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="reader-modal" class="modal">
+        <div class="modal-content reader-content">
+            <span class="close">&times;</span>
+            <h2 id="reader-title"></h2>
+            <div id="pdf-viewer"></div>
+        </div>
+    </div>
+
+    <div id="success-modal" class="modal">
+        <div class="modal-content success-content">
+            <span class="close">&times;</span>
+            <div class="success-icon">✓</div>
+            <h2>Success!</h2>
+            <p id="success-message"></p>
+            <button class="btn-primary" onclick="closeSuccessModal()">OK</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 BookVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+/* script.js content (with fix and new features) */
+const sampleBooks = [
+    {
+        id: 1,
+        title: "A Brief History of Time",
+        author: "Stephen Hawking",
+        category: "Physics",
+        price: 15.99,
+        rating: 4.8,
+        description: "From the Big Bang to Black Holes, Stephen Hawking explores the cosmos and explains complex concepts in a way that anyone can understand. This groundbreaking book examines the nature of time and space.",
+        cover: "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=600&fit=crop",
+        sample: "Chapter 1: Our Picture of the Universe\n\nA well-known scientist (some say it was Bertrand Russell) once gave a public lecture on astronomy. He described how the earth orbits around the sun and how the sun, in turn, orbits around the center of a vast collection of stars called our galaxy. At the end of the lecture, a little old lady at the back of the room got up and said: 'What you have told us is rubbish. The world is really a flat plate supported on the back of a giant tortoise.'...",
+        isFree: false
+    },
+    {
+        id: 2,
+        title: "The Selfish Gene",
+        author: "Richard Dawkins",
+        category: "Biology",
+        price: 18.99,
+        rating: 4.7,
+        description: "Richard Dawkins' brilliant reformulation of the theory of natural selection has the rare distinction of having provoked as much excitement and interest outside the scientific community as within it.",
+        cover: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=600&fit=crop",
+        sample: "Chapter 1: Why Are People?\n\nIntelligent life on a planet comes of age when it first works out the reason for its own existence. If superior creatures from space ever visit earth, the first question they will ask, in order to assess the level of our civilization, is: 'Have they discovered evolution yet?'...",
+        isFree: false
+    },
+    {
+        id: 3,
+        title: "Cosmos (Free Sample)",
+        author: "Carl Sagan",
+        category: "Astronomy",
+        price: 0.00, // Now a FREE book
+        rating: 4.9,
+        description: "Cosmos is one of the bestselling science books of all time. In clear-eyed prose, Sagan reveals a jewel-like blue world inhabited by a life form that is just beginning to discover its own identity. Enjoy this volume for free!",
+        cover: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&h=600&fit=crop",
+        sample: "Chapter 1: The Shores of the Cosmic Ocean\n\nThe Cosmos is all that is or ever was or ever will be. Our feeblest contemplations of the Cosmos stir us -- there is a tingling in the spine, a catch in the voice, a faint sensation, as if a distant memory, of falling from a height...",
+        isFree: true
+    },
+    {
+        id: 4,
+        title: "The Elegant Universe",
+        author: "Brian Greene",
+        category: "Physics",
+        price: 19.99,
+        rating: 4.6,
+        description: "Brian Greene takes us on a journey through the universe, exploring the latest theories in physics. From quantum mechanics to string theory, this book makes complex ideas accessible.",
+        cover: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=600&fit=crop",
+        sample: "Preface\n\nDuring the last thirty years of his life, Albert Einstein sought relentlessly for a so-called unified field theory—a theory capable of describing nature's forces within a single, all-encompassing, coherent framework...",
+        isFree: false
+    },
+    {
+        id: 5,
+        title: "Introduction to Philosophy",
+        author: "Various Authors",
+        category: "Other",
+        price: 0.00, // Another FREE book
+        rating: 4.2,
+        description: "A comprehensive introduction to key philosophical concepts and thinkers. Perfect for new students and casual readers.",
+        cover: "https://images.unsplash.com/photo-1577747372335-e111244e83c6?w=400&h=600&fit=crop",
+        sample: "What is philosophy?\n\nPhilosophy (from Greek: φιλοσοφία, philosophia, 'love of wisdom') is the study of general and fundamental problems concerning matters such as existence, knowledge, values, reason, mind, and language...",
+        isFree: true
+    },
+    {
+        id: 6,
+        title: "The Origin of Species",
+        author: "Charles Darwin",
+        category: "Biology",
+        price: 13.99,
+        rating: 4.9,
+        description: "Darwin's revolutionary theory of evolution by natural selection changed our understanding of life on Earth. This landmark work continues to influence science and society.",
+        cover: "https://images.unsplash.com/photo-1516876437184-593fda40c7ce?w=400&h=600&fit=crop",
+        sample: "Introduction\n\nWhen on board H.M.S. Beagle, as naturalist, I was much struck with certain facts in the distribution of the inhabitants of South America, and in the geological relations of the present to the past inhabitants of that continent...",
+        isFree: false
+    },
+    {
+        id: 7,
+        title: "Astrophysics for People in a Hurry",
+        author: "Neil deGrasse Tyson",
+        category: "Astronomy",
+        price: 16.99,
+        rating: 4.7,
+        description: "What is the nature of space and time? How do we fit within the universe? Neil deGrasse Tyson brings the universe down to Earth succinctly and clearly, with sparkling wit.",
+        cover: "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=400&h=600&fit=crop",
+        sample: "Chapter 1: The Greatest Story Ever Told\n\nIn the beginning, nearly fourteen billion years ago, all the space and all the matter and all the energy of the known universe was contained in a volume less than one-trillionth the size of the period that ends this sentence...",
+        isFree: false
+    },
+    {
+        id: 8,
+        title: "Thinking, Fast and Slow",
+        author: "Daniel Kahneman",
+        category: "Psychology",
+        price: 17.99,
+        rating: 4.8,
+        description: "A groundbreaking tour through the mind showing how we think, make decisions, and judge. Kahneman reveals where we can trust our intuitions and how we can tap into the benefits of slow thinking.",
+        cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=600&fit=crop",
+        sample: "Introduction\n\nEvery author has in mind a setting in which readers of his or her work could benefit from having read it. Mine is the proverbial office cooler, where opinions are shared and gossip is exchanged...",
+        isFree: false
+    },
+    {
+        id: 9,
+        title: "The Code Book",
+        author: "Simon Singh",
+        category: "Mathematics",
+        price: 15.99,
+        rating: 4.6,
+        description: "The Science of Secrecy from Ancient Egypt to Quantum Cryptography. A fascinating journey through the history of codes and codebreaking.",
+        cover: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400&h=600&fit=crop",
+        sample: "Chapter 1: The Cipher of Mary Queen of Scots\n\nOn the morning of Saturday 15 October 1586, Queen Mary entered the crowded courtroom at Fotheringhay Castle. Years of imprisonment and the onset of rheumatism had taken their toll...",
+        isFree: false
+    },
+    {
+        id: 10,
+        title: "The Structure of Scientific Revolutions",
+        author: "Thomas Kuhn",
+        category: "Physics",
+        price: 14.99,
+        rating: 4.7,
+        description: "A landmark in intellectual history which has attracted attention far beyond its own immediate field. Kuhn's account of the development of science has influenced scholars across disciplines.",
+        cover: "https://images.unsplash.com/photo-1532619675605-1ede6c2ed2b0?w=400&h=600&fit=crop",
+        sample: "Preface\n\nThe essay that follows is the first full published report on a project originally conceived almost fifteen years ago. At that time I was a graduate student in theoretical physics...",
+        isFree: false
+    }
+];
+
+let currentUser = null;
+let currentBookId = null;
+let uploadedBooks = [];
+let purchasedBooks = [];
+let wishlistBooks = [];
+let viewedBooks = [];
+
+function initializeApp() {
+    // FIX: Explicitly hide all modals on load to prevent the pop-up bug
+    document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+    
+    checkUserSession(); 
+    loadDataFromStorage(); 
+    displayTopBooks();
+    setupEventListeners();
+    updateRecommendations();
+}
+
+function loadDataFromStorage() {
+    const storedUploaded = localStorage.getItem('uploadedBooks');
+    if (storedUploaded) {
+        uploadedBooks = JSON.parse(storedUploaded);
+    }
+
+    const storedViewed = localStorage.getItem('viewedBooks');
+    if (storedViewed) {
+        viewedBooks = JSON.parse(storedViewed);
+    }
+
+    if (currentUser) {
+        const userPurchases = localStorage.getItem(`purchases_${currentUser.email}`);
+        if (userPurchases) {
+            purchasedBooks = JSON.parse(userPurchases);
+        }
+
+        const userWishlist = localStorage.getItem(`wishlist_${currentUser.email}`);
+        if (userWishlist) {
+            wishlistBooks = JSON.parse(userWishlist);
+        }
+    }
+}
+
+function saveDataToStorage() {
+    localStorage.setItem('uploadedBooks', JSON.stringify(uploadedBooks));
+    localStorage.setItem('viewedBooks', JSON.stringify(viewedBooks));
+    
+    if (currentUser) {
+        localStorage.setItem(`purchases_${currentUser.email}`, JSON.stringify(purchasedBooks));
+        localStorage.setItem(`wishlist_${currentUser.email}`, JSON.stringify(wishlistBooks));
+    }
+}
+
+function checkUserSession() {
+    const session = localStorage.getItem('currentUser');
+    if (session) {
+        currentUser = JSON.parse(session);
+        updateUIForLoggedInUser();
+    }
+}
+
+function updateUIForLoggedInUser() {
+    document.getElementById('login-nav').style.display = 'none';
+    document.getElementById('my-books-nav').style.display = 'block';
+    document.getElementById('user-greeting').style.display = 'block';
+    document.getElementById('logout-btn').style.display = 'block';
+    document.getElementById('user-greeting').textContent = `Hi, ${currentUser.name}`;
+}
+
+function updateUIForLoggedOutUser() {
+    document.getElementById('login-nav').style.display = 'block';
+    document.getElementById('my-books-nav').style.display = 'none';
+    document.getElementById('user-greeting').style.display = 'none';
+    document.getElementById('logout-btn').style.display = 'none';
+}
+
+function setupEventListeners() {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = e.target.dataset.page;
+            if ((page === 'my-books' || page === 'upload') && !currentUser) {
+                showPage('login');
+                showSuccessModal(`Please login to access ${page === 'my-books' ? 'My Books' : 'the Upload feature'}`);
+                return;
+            }
+            showPage(page);
+        });
+    });
+
+    document.querySelector('.hamburger').addEventListener('click', () => {
+        document.querySelector('.nav-menu').classList.toggle('active');
+    });
+
+    document.querySelector('.logo h1').addEventListener('click', () => {
+        showPage('home');
+    });
+
+    document.getElementById('search-btn').addEventListener('click', performSearch);
+    document.getElementById('search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performSearch();
+    });
+
+    document.getElementById('category-filter').addEventListener('change', filterLibrary);
+    
+    // NEW: Toggle price input based on free checkbox
+    document.getElementById('is-free-book').addEventListener('change', (e) => {
+        const priceInput = document.getElementById('book-price');
+        if (e.target.checked) {
+            priceInput.value = '0.00';
+            priceInput.disabled = true;
+        } else {
+            priceInput.value = '';
+            priceInput.disabled = false;
+        }
+    });
+
+    document.getElementById('upload-form').addEventListener('submit', handleBookUpload);
+    document.getElementById('login-form').addEventListener('submit', handleLogin);
+    document.getElementById('signup-form').addEventListener('submit', handleSignup);
+    document.getElementById('checkout-form').addEventListener('submit', handleCheckout);
+
+    document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+        radio.addEventListener('change', handlePaymentMethodChange);
+    });
+
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const tabName = e.target.dataset.tab;
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            if (tabName === 'login') {
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('signup-form').style.display = 'none';
+            } else {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('signup-form').style.display = 'block';
+            }
+        });
+    });
+
+    document.querySelectorAll('.my-books-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const tabName = e.target.dataset.tab;
+            document.querySelectorAll('.my-books-tab').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            document.querySelectorAll('.my-books-section').forEach(s => s.style.display = 'none');
+            document.getElementById(`${tabName}-books`).style.display = 'block';
+            
+            if (tabName === 'purchased') displayPurchasedBooks();
+            else if (tabName === 'uploaded') displayUploadedBooks();
+            else if (tabName === 'wishlist') displayWishlistBooks();
+        });
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+    document.querySelectorAll('.close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', () => {
+            closeBtn.closest('.modal').style.display = 'none';
+        });
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+        }
+    });
+}
+
+function showPage(pageName) {
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    document.getElementById(`${pageName}-page`).classList.add('active');
+    
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+    const navLink = document.querySelector(`[data-page="${pageName}"]`);
+    if(navLink) navLink.classList.add('active');
+
+    if (pageName === 'library') {
+        displayLibrary();
+    } else if (pageName === 'free-books') {
+        displayFreeBooks();
+    } else if (pageName === 'my-books') {
+        // Ensure the correct tab content is shown when navigating to 'my-books'
+        document.querySelector('.my-books-tab[data-tab="purchased"]').click();
+    }
+
+    document.querySelector('.nav-menu').classList.remove('active');
+}
+
+function getAllBooks() {
+    return [...sampleBooks, ...uploadedBooks];
+}
+
+function displayTopBooks() {
+    const grid = document.getElementById('top-books-grid');
+    grid.innerHTML = '';
+    
+    // Display the first 10 books that are NOT free
+    sampleBooks.filter(book => !book.isFree).slice(0, 10).forEach(book => {
+        grid.appendChild(createBookCard(book, true));
+    });
+}
+
+function displayFreeBooks() {
+    const grid = document.getElementById('free-books-grid');
+    const allBooks = getAllBooks();
+    grid.innerHTML = '';
+
+    const freeBooks = allBooks.filter(book => book.price === 0.00 || book.isFree);
+    
+    if (freeBooks.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No free books available right now.</p>';
+        return;
+    }
+
+    freeBooks.forEach(book => {
+        grid.appendChild(createBookCard(book, true));
+    });
+}
+
+function displayLibrary() {
+    const grid = document.getElementById('library-grid');
+    const allBooks = getAllBooks();
+    grid.innerHTML = '';
+    
+    allBooks.forEach(book => {
+        grid.appendChild(createBookCard(book, false));
+    });
+}
+
+function filterLibrary() {
+    const category = document.getElementById('category-filter').value;
+    const grid = document.getElementById('library-grid');
+    const allBooks = getAllBooks();
+    
+    grid.innerHTML = '';
+    
+    const filtered = category === 'all' 
+        ? allBooks 
+        : allBooks.filter(book => book.category === category);
+    
+    filtered.forEach(book => {
+        grid.appendChild(createBookCard(book, false));
+    });
+}
+
+function createBookCard(book, showPreview) {
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    
+    const isBookFree = book.price === 0.00 || book.isFree;
+    
+    const safeRating = typeof book.rating === 'number' && book.rating >= 0 ? book.rating : 0;
+    const stars = '⭐'.repeat(Math.round(safeRating));
+    
+    const priceDisplay = isBookFree 
+        ? '<span class="price"><span class="free-badge">FREE</span></span>' 
+        : `<p class="price">$${book.price.toFixed(2)}</p>`;
+
+    const buttonText = isBookFree 
+        ? 'Get Book / Read Now' 
+        : 'View Details';
+    
+    const buyButtonAction = isBookFree 
+        ? `getFreeBook(${book.id})`
+        : `viewBookDetails(${book.id})`;
+
+    card.innerHTML = `
+        <img src="${book.cover}" alt="${book.title}">
+        <div class="book-card-content">
+            <h3>${book.title}</h3>
+            <p class="author">by ${book.author}</p>
+            <div class="rating">${stars} ${safeRating.toFixed(1)}</div>
+            ${priceDisplay}
+            ${showPreview ? `<p class="description">${book.description}</p>` : ''}
+            <div class="book-card-actions">
+                <button class="btn-primary" onclick="${buyButtonAction}">${buttonText}</button>
+                ${showPreview && !isBookFree ? `<button class="btn-secondary" onclick="showSampleReader(${book.id})">Read Sample</button>` : ''}
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+function viewBookDetails(bookId) {
+    const allBooks = getAllBooks();
+    const book = allBooks.find(b => b.id === bookId);
+    
+    if (!book) return;
+    
+    currentBookId = bookId;
+    trackViewedBook(bookId);
+    
+    const isBookFree = book.price === 0.00 || book.isFree;
+
+    document.getElementById('detail-cover').src = book.cover;
+    document.getElementById('detail-title').textContent = book.title;
+    document.getElementById('detail-author').textContent = book.author;
+    
+    const safeRating = typeof book.rating === 'number' && book.rating >= 0 ? book.rating : 0;
+    document.getElementById('detail-rating').textContent = '⭐'.repeat(Math.round(safeRating)) + ` ${safeRating.toFixed(1)}`;
+    
+    document.getElementById('detail-price').innerHTML = isBookFree 
+        ? '<span class="free-badge">FREE</span>' 
+        : `$${book.price.toFixed(2)}`;
+
+    document.getElementById('detail-description').textContent = book.description;
+    
+    const buyBtn = document.getElementById('detail-buy-btn');
+    buyBtn.textContent = isBookFree ? 'Get Book / Read Now' : 'Buy Now';
+    buyBtn.onclick = () => isBookFree ? getFreeBook(bookId) : initiateCheckout(bookId);
+    
+    document.getElementById('detail-preview-btn').onclick = () => showSampleReader(bookId);
+    document.getElementById('detail-wishlist-btn').onclick = () => addToWishlist(bookId);
+    
+    displayRelatedBooks(book);
+    showPage('book-details');
+}
+
+function getFreeBook(bookId) {
+    if (!currentUser) {
+        showSuccessModal('Please login to get this free book.');
+        showPage('login');
+        return;
+    }
+
+    const allBooks = getAllBooks();
+    const book = allBooks.find(b => b.id === bookId);
+    
+    if (!book) return;
+    
+    if (purchasedBooks.some(b => b.id === bookId)) {
+        showSuccessModal('You already own this book! Opening reader...');
+        openBookReader(book);
+        return;
+    }
+
+    // Immediately "purchase" the book
+    purchasedBooks.push(book);
+    saveDataToStorage();
+
+    // The user should be able to read this book immediately
+    showSuccessModal(`${book.title} has been added to your Library! You can now read it.`);
+    openBookReader(book);
+}
+
+
+function displayRelatedBooks(currentBook) {
+    const grid = document.getElementById('related-books-grid');
+    const allBooks = getAllBooks();
+    
+    const related = allBooks.filter(book => 
+        book.id !== currentBook.id && 
+        (book.category === currentBook.category || book.author === currentBook.author)
+    ).slice(0, 4);
+    
+    grid.innerHTML = '';
+    related.forEach(book => {
+        grid.appendChild(createBookCard(book, false));
+    });
+}
+
+function trackViewedBook(bookId) {
+    if (!viewedBooks.includes(bookId)) {
+        viewedBooks.push(bookId);
+        if (viewedBooks.length > 20) {
+            viewedBooks.shift();
+        }
+        saveDataToStorage();
+        updateRecommendations();
+    }
+}
+
+function updateRecommendations() {
+    if (viewedBooks.length === 0) {
+        document.getElementById('recommendations-section').style.display = 'none';
+        return;
+    }
+    
+    const allBooks = getAllBooks();
+    const viewedBooksData = viewedBooks.map(id => allBooks.find(b => b.id === id)).filter(b => b);
+    
+    const categories = [...new Set(viewedBooksData.map(b => b.category))];
+    const authors = [...new Set(viewedBooksData.map(b => b.author))];
+    
+    const recommended = allBooks.filter(book => 
+        !viewedBooks.includes(book.id) &&
+        (categories.includes(book.category) || authors.includes(book.author))
+    ).slice(0, 4);
+    
+    if (recommended.length > 0) {
+        const grid = document.getElementById('recommendations-grid');
+        grid.innerHTML = '';
+        recommended.forEach(book => {
+            grid.appendChild(createBookCard(book, false));
+        });
+        document.getElementById('recommendations-section').style.display = 'block';
+    } else {
+        document.getElementById('recommendations-section').style.display = 'none';
+    }
+}
+
+function showSampleReader(bookId) {
+    const allBooks = getAllBooks();
+    const book = allBooks.find(b => b.id === bookId);
+    
+    if (!book) return;
+    
+    document.getElementById('reader-title').textContent = `${book.title} - Sample Preview`;
+    const viewer = document.getElementById('pdf-viewer');
+    
+    viewer.innerHTML = `<div style="padding: 2rem; line-height: 1.8; background: white; border-radius: 8px;">
+        <h3 style="margin-bottom: 1rem; color: #2C3E50;">Sample Preview</h3>
+        <p style="white-space: pre-wrap;">${book.sample || 'Sample preview not available for this book.'}</p>
+    </div>`;
+    
+    document.getElementById('reader-modal').style.display = 'block';
+}
+
+function performSearch() {
+    const query = document.getElementById('search-input').value.toLowerCase().trim();
+    
+    if (!query) {
+        displayLibrary();
+        showPage('library');
+        return;
+    }
+    
+    const allBooks = getAllBooks();
+    const results = allBooks.filter(book => 
+        book.title.toLowerCase().includes(query) ||
+        book.author.toLowerCase().includes(query) ||
+        book.category.toLowerCase().includes(query) ||
+        book.description.toLowerCase().includes(query)
+    );
+    
+    const grid = document.getElementById('library-grid');
+    grid.innerHTML = '';
+    
+    if (results.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No books found matching your search.</p>';
+    } else {
+        results.forEach(book => {
+            grid.appendChild(createBookCard(book, false));
+        });
+    }
+    
+    showPage('library');
+}
+
+function handleBookUpload(e) {
+    e.preventDefault();
+    
+    if (!currentUser) {
+        showSuccessModal('Please login to upload books');
+        showPage('login');
+        return;
+    }
+    
+    const title = document.getElementById('book-title').value;
+    const author = document.getElementById('book-author').value;
+    const description = document.getElementById('book-description').value;
+    const category = document.getElementById('book-category').value;
+    const priceInput = document.getElementById('book-price');
+    const isFree = document.getElementById('is-free-book').checked;
+    
+    const price = isFree ? 0.00 : parseFloat(priceInput.value);
+    
+    const file = document.getElementById('book-file').files[0];
+    const coverFile = document.getElementById('book-cover').files[0];
+    
+    const newBook = {
+        id: Date.now(),
+        title,
+        author,
+        category,
+        price,
+        rating: 0,
+        description,
+        cover: coverFile ? URL.createObjectURL(coverFile) : 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop',
+        sample: description, // Use description as sample/full content for uploaded books
+        uploadedBy: currentUser.email,
+        file: file ? URL.createObjectURL(file) : null,
+        isFree: isFree
+    };
+    
+    uploadedBooks.push(newBook);
+    saveDataToStorage();
+    
+    showSuccessModal('Book uploaded successfully!');
+    document.getElementById('upload-form').reset();
+    priceInput.disabled = false; // Re-enable price input after reset
+    showPage('library');
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        currentUser = { name: user.name, email: user.email };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateUIForLoggedInUser();
+        loadDataFromStorage();
+        showSuccessModal(`Welcome back, ${user.name}!`);
+        showPage('home');
+        document.getElementById('login-form').reset();
+    } else {
+        showSuccessModal('Invalid email or password');
+    }
+}
+
+function handleSignup(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    
+    if (users.find(u => u.email === email)) {
+        showSuccessModal('Email already registered');
+        return;
+    }
+    
+    users.push({ name, email, password });
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    currentUser = { name, email };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    updateUIForLoggedInUser();
+    
+    showSuccessModal(`Account created successfully! Welcome, ${name}!`);
+    showPage('home');
+    document.getElementById('signup-form').reset();
+}
+
+function handleLogout() {
+    currentUser = null;
+    purchasedBooks = [];
+    wishlistBooks = [];
+    localStorage.removeItem('currentUser');
+    updateUIForLoggedOutUser();
+    showSuccessModal('Logged out successfully');
+    showPage('home');
+}
+
+function initiateCheckout(bookId) {
+    if (!currentUser) {
+        showSuccessModal('Please login to purchase books');
+        showPage('login');
+        return;
+    }
+    
+    const allBooks = getAllBooks();
+    const book = allBooks.find(b => b.id === bookId);
+    
+    if (!book) return;
+    
+    if (purchasedBooks.some(b => b.id === bookId)) {
+        showSuccessModal('You already own this book!');
+        return;
+    }
+    
+    document.getElementById('checkout-book-title').textContent = book.title;
+    document.getElementById('checkout-amount').textContent = `$${book.price.toFixed(2)}`;
+    document.getElementById('checkout-name').value = currentUser.name;
+    document.getElementById('checkout-email').value = currentUser.email;
+    
+    currentBookId = bookId;
+    
+    const creditCardRadio = document.querySelector('input[name="payment-method"][value="credit-card"]');
+    creditCardRadio.checked = true;
+    
+    const cardDetailsSection = document.getElementById('card-details-section');
+    cardDetailsSection.style.display = 'block';
+    cardDetailsSection.querySelectorAll('input').forEach(input => input.required = true);
+    
+    document.getElementById('checkout-modal').style.display = 'block';
+}
+
+function handlePaymentMethodChange(e) {
+    const cardDetailsSection = document.getElementById('card-details-section');
+    const cardInputs = cardDetailsSection.querySelectorAll('input');
+    
+    if (e.target.value === 'credit-card') {
+        cardDetailsSection.style.display = 'block';
+        cardInputs.forEach(input => input.required = true);
+    } else {
+        cardDetailsSection.style.display = 'none';
+        cardInputs.forEach(input => input.required = false);
+    }
+}
+
+function handleCheckout(e) {
+    e.preventDefault();
+    
+    const allBooks = getAllBooks();
+    const book = allBooks.find(b => b.id === currentBookId);
+    
+    if (!book) return;
+    
+    const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+    
+    // Simulate payment processing...
+    
+    purchasedBooks.push(book);
+    saveDataToStorage();
+    
+    document.getElementById('checkout-modal').style.display = 'none';
+    document.getElementById('checkout-form').reset();
+    
+    downloadBook(book);
+    
+    const paymentMethodNames = {
+        'credit-card': 'Credit Card',
+        'paypal': 'PayPal',
+        'google-pay': 'Google Pay',
+        'apple-pay': 'Apple Pay'
+    };
+    
+    showSuccessModal(`Book Purchased Successfully via ${paymentMethodNames[paymentMethod]}! The book is downloading and saved to "My Library".`);
+}
+
+function downloadBook(book) {
+    // Check if a file URL is available (for uploaded books)
+    const fileUrl = book.file;
+
+    if (fileUrl) {
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = `${book.title.replace(/[^a-z0-9]/gi, '_')}_BookVerse.pdf`; 
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    } else {
+        // For sample books, create a text file simulation
+        const bookContent = `
+==========================================
+${book.title}
+by ${book.author}
+==========================================
+
+Category: ${book.category}
+Price: $${book.price.toFixed(2)}
+Rating: ${book.rating.toFixed(1)}/5
+
+Description:
+${book.description}
+
+==========================================
+SIMULATED FULL CONTENT
+==========================================
+
+${book.sample || 'Full book content would be available here.'}
+
+==========================================
+Thank you for your purchase!
+This is a simulated eBook download from BookVerse.
+(Full, non-sample files are downloaded directly for uploaded books)
+==========================================
+        `;
+        
+        const blob = new Blob([bookContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${book.title.replace(/[^a-z0-9]/gi, '_')}_BookVerse.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+}
+
+function addToWishlist(bookId) {
+    if (!currentUser) {
+        showSuccessModal('Please login to add books to wishlist');
+        showPage('login');
+        return;
+    }
+    
+    const allBooks = getAllBooks();
+    const book = allBooks.find(b => b.id === bookId);
+    
+    if (!book) return;
+    
+    if (wishlistBooks.some(b => b.id === bookId)) {
+        showSuccessModal('Book already in wishlist');
+        return;
+    }
+    
+    wishlistBooks.push(book);
+    saveDataToStorage();
+    showSuccessModal('Book added to wishlist!');
+}
+
+function displayPurchasedBooks() {
+    const grid = document.getElementById('purchased-books-grid');
+    grid.innerHTML = '';
+    
+    if (purchasedBooks.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Your library is empty. Go find a book!</p>';
+        return;
+    }
+    
+    purchasedBooks.forEach(book => {
+        const card = createBookCard(book, false);
+        const readBtn = document.createElement('button');
+        readBtn.className = 'btn-primary';
+        readBtn.textContent = 'Read Now';
+        readBtn.onclick = () => openBookReader(book);
+        
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'btn-secondary';
+        downloadBtn.textContent = '📥 Download';
+        downloadBtn.onclick = () => downloadBook(book);
+        
+        const actions = card.querySelector('.book-card-actions');
+        actions.innerHTML = ''; 
+        actions.appendChild(readBtn);
+        actions.appendChild(downloadBtn);
+        grid.appendChild(card);
+    });
+}
+
+function displayUploadedBooks() {
+    const grid = document.getElementById('uploaded-books-grid');
+    grid.innerHTML = '';
+    
+    if (!currentUser) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Please log in to view your uploads.</p>';
+        return;
+    }
+
+    const userUploads = uploadedBooks.filter(b => b.uploadedBy === currentUser.email);
+    
+    if (userUploads.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">You haven\'t uploaded any books yet.</p>';
+        return;
+    }
+    
+    userUploads.forEach(book => {
+        const card = createBookCard(book, false);
+        
+        // Add "Read Now" button for uploads
+        const actions = card.querySelector('.book-card-actions');
+        actions.innerHTML = ''; 
+        const readBtn = document.createElement('button');
+        readBtn.className = 'btn-primary';
+        readBtn.textContent = 'Read Upload';
+        readBtn.onclick = () => openBookReader(book);
+        actions.appendChild(readBtn);
+        
+        grid.appendChild(card);
+    });
+}
+
+function displayWishlistBooks() {
+    const grid = document.getElementById('wishlist-books-grid');
+    grid.innerHTML = '';
+    
+    if (wishlistBooks.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Your wishlist is empty.</p>';
+        return;
+    }
+    
+    wishlistBooks.forEach(book => {
+        const card = createBookCard(book, false);
+        
+        const actions = card.querySelector('.book-card-actions');
+        actions.innerHTML = '';
+
+        const viewDetailsBtn = document.createElement('button');
+        viewDetailsBtn.className = 'btn-primary';
+        viewDetailsBtn.textContent = 'View Details';
+        viewDetailsBtn.onclick = () => viewBookDetails(book.id);
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-secondary';
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = () => removeFromWishlist(book.id);
+        
+        actions.appendChild(viewDetailsBtn);
+        actions.appendChild(removeBtn);
+        grid.appendChild(card);
+    });
+}
+
+function removeFromWishlist(bookId) {
+    wishlistBooks = wishlistBooks.filter(b => b.id !== bookId);
+    saveDataToStorage();
+    displayWishlistBooks();
+    showSuccessModal('Book removed from wishlist');
+}
+
+function openBookReader(book) {
+    document.getElementById('reader-title').textContent = book.title;
+    const viewer = document.getElementById('pdf-viewer');
+    
+    // Logic: If there's an actual file uploaded, use the iframe. 
+    // Otherwise, show the text content (which serves as the "full book" for sample books).
+    if (book.file) {
+        // This simulates reading a PDF/EPUB file uploaded by the user
+        viewer.innerHTML = `<iframe src="${book.file}" width="100%" height="100%" style="border: none;"></iframe>`;
+    } else {
+        // This is for reading the sample books or books uploaded without an actual file in this simulation
+        viewer.innerHTML = `<div style="padding: 2rem; line-height: 1.8;">
+            <h3>Content: ${book.title}</h3>
+            <p style="white-space: pre-wrap;">${book.sample || 'Full book content will be available soon.'}</p>
+        </div>`;
+    }
+    
+    document.getElementById('reader-modal').style.display = 'block';
+}
+
+function showSuccessModal(message) {
+    document.getElementById('success-message').textContent = message;
+    document.getElementById('success-modal').style.display = 'block';
+}
+
+function closeSuccessModal() {
+    document.getElementById('success-modal').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', initializeApp);
+
+    </script>
+</body>
+</html>
